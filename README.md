@@ -24,7 +24,17 @@
 
 ## Setup / Deployment Guide
 
-## Lessons Learned
+## Milestone Log
+
+### Milestone 1: Account Safety Net
+**Why:** (your 2-3 sentence paragraph goes here — why you did this before touching any other AWS service)
+
+**What was built:**
+- IAM user + group (least privilege, MFA-enabled)
+- CloudWatch billing alarm
+- SNS email notification
+
+**Lessons Learned**
 - AWS billing metrics only exist in the us-east-1 region, regardless of which region your actual resources live in.
 - Root account should never be used for daily work — enabling MFA on root and then creating a separate least-privilege IAM user is the standard first step on any new AWS account.
 
