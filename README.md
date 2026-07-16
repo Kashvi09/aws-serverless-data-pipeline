@@ -21,6 +21,7 @@ Currently implemented: account security setup, S3 ingestion bucket, and an S3-tr
 | S3 | Stores raw data files uploaded to the pipeline; triggers Lambda on new uploads |
 | IAM Role (lambda-s3-read-role) | Grants Lambda least-privilege permissions to read from S3 and write logs to CloudWatch |
 | Lambda | Runs code automatically in response to S3 upload events; processes incoming files |
+| DynamoDB | Stores processed file metadata (file_id, bucket, status) for later querying |
 
 
 
@@ -34,6 +35,7 @@ Currently implemented: account security setup, S3 ingestion bucket, and an S3-tr
 | IAM Role (lambda-s3-read-role) | Lambda execution permissions | Always free | $0 | No |
 | Lambda (process-incoming-data) | Processes file son S3 upload | Yes - 1M requests + 400,000 GB-seconds/month, permanently | Effectively $0 at test scale | No - keep permanently |
 | S3 Event Notification | Triggers lambda on upload | Free(bucket config, not a billed resource) | $0 | No |
+| DynammoDB Table (ProcessedFilesMetadata) | Stores processed file metadata | Yes - 25GB storage + 25 write/read capacity units always free(this is part of AWS's always-free tier, not just first 12 months); on-demand mode also has its own always-free monthly request allowance | Effectively $0 at test scale | A handful of test writes/reads | No - keep permanently |
 
 ## Setup / Deployment Guide
 
@@ -44,6 +46,7 @@ Detailed write-ups (why each decision was made, what was built, lessons learned)
 - [Milestone 1: Account Safety Net](./docs/milestone-1-account-setup.md)
 - [Milestone 2: S3 Ingestion Bucket + IAM Role](./docs/milestone-2-s3-iam.md)
 - [Milestone 3: Lambda Function + S3 Event Trigger](./docs/milestone-3-lambda-trigger.md)
+- [Milestone 4: DynamoDB Table for Processed Data](./docs/milestone-4-dynamodb-table.md)
 
 ## Known Limitations
 
