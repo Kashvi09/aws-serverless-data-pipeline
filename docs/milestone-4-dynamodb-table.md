@@ -1,4 +1,4 @@
-# Milestone 3: DynamoDB Table for Processed Data
+# Milestone 4:  DynamoDB Table for Processed Data
 **Why:** Until now, Lambda only logged that a file had been uploaded — that information disappeared into CloudWatch logs, not queryable or usable by anything else. This milestone gives the pipeline a persistent, queryable place to store processed results, which Milestone 5's API will read from. We chose DynamoDB over RDS because our data has no relational structure requiring joins across tables — it's a simple "one record per file" lookup, which fits DynamoDB's key-based access model naturally, without RDS's schema rigidity or its continuous hourly billing. 
 
 **What was built:**
