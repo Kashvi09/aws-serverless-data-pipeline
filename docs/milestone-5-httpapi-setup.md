@@ -5,6 +5,7 @@
 - Lambda function: query-processed-files, using a new dedicated execution role lambda-dynamodb-read-role, attached with AmazonDynamoDBReadOnlyAccess and AWSLambdaBasicExecutionRole only — no S3 access, since this function never touches S3.
 - API Gateway (HTTP API): a GET route at /files, integrated with the new Lambda function, deployed to the default stage.
 - The function calls table.scan() to retrieve all items and returns them as a JSON response.
+
 **Lessons Learned**
 - This time, the Lambda role was scoped correctly from the start — a separate role (lambda-dynamodb-read-role) with only the two permissions this function actually needs (DynamoDB read, CloudWatch logging), rather than reusing or broadening an existing role. This is a direct contrast to Milestone 4's compromise of stacking broad policies onto one shared role — proof that designing scoped roles per function from the beginning is more disciplined than retrofitting permissions later.
 - scan() reads every item in the table, which is fine at this project's small scale, but doesn't scale well — it reads (and is billed for) the entire table regardless of how much data you actually need. query() instead retrieves only items matching a specific key, and is the production-appropriate choice as a table grows.
