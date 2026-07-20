@@ -24,6 +24,7 @@ Currently implemented: account security setup, S3 ingestion bucket, and an S3-tr
 | DynamoDB | Stores processed file metadata (file_id, bucket, status) for later querying |
 | IAM Role (lambda-dynamodb-read-role) | Grants query Lambda least-privilege permissions to read from DynamoDB and write logs to CloudWatch |
 | API Gateway (HTTP API) | Exposes a public GET endpoint that queries processed file data |
+| CloudFormation | Defines all project resources as a single Infrastructure-as-Code template; enables one-click deploy and teardown |
 
 
 ## Cost Breakdown
@@ -40,6 +41,7 @@ Currently implemented: account security setup, S3 ingestion bucket, and an S3-tr
 | Lambda (query-processed-files) | Reads DynamoDB, returns JSON via API | Yes — always-free tier | Effectively $0 at test scale | No — keep permanently |
 | IAM Role (lambda-dynamodb-read-role) | Query Lambda execution permissions | Always free | $0 | No |
 | API Gateway (HTTP API) | Public query endpoint | Yes — **first 12 months only** | $0 now; ~$1/million requests after 12 months | No — but revisit cost assumption after year 1 |
+| CloudFormation | Orchestrates resource creation/deletion | Yes — always free (you pay only for the resources it creates, not the service itself) | $0 | No |
 
 **Note:** API Gateway is the only resource in this project not part of AWS's *permanent* always-free tier — flagged here as the one line item to revisit if this project is kept running past its first year.
 
@@ -54,6 +56,7 @@ Detailed write-ups (why each decision was made, what was built, lessons learned)
 - [Milestone 3: Lambda Function + S3 Event Trigger](./docs/milestone-3-lambda-trigger.md)
 - [Milestone 4: DynamoDB Table for Processed Data](./docs/milestone-4-dynamodb-table.md)
 - [Milestone 5: API Gateway Query Endpoint](./docs/milestone-5-httpapi-setup.md)
+- [Milestone 6: Infrastructure As code](./docs/milestone-6-infrasturcture-as-code)
 
 ## Known Limitations
 - The `/files` API Gateway endpoint is currently open — no authentication or API key required. Anyone with the URL can query it.
