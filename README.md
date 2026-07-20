@@ -56,7 +56,7 @@ Detailed write-ups (why each decision was made, what was built, lessons learned)
 - [Milestone 3: Lambda Function + S3 Event Trigger](./docs/milestone-3-lambda-trigger.md)
 - [Milestone 4: DynamoDB Table for Processed Data](./docs/milestone-4-dynamodb-table.md)
 - [Milestone 5: API Gateway Query Endpoint](./docs/milestone-5-httpapi-setup.md)
-- [Milestone 6: Infrastructure As code](./docs/milestone-6-infrasturcture-as-code)
+- [Milestone 6: Infrastructure As code](./docs/milestone-6-infrasturcture-as-code.md)
 
 ## Known Limitations
 - The `/files` API Gateway endpoint is currently open — no authentication or API key required. Anyone with the URL can query it.
