@@ -18,9 +18,6 @@ Resources:
         LambdaConfigurations:
           - Event: s3:ObjectCreated:*
             Function: !GetAtt IngestionFunction.Arn
-      Tags:
-        - Key: Project
-          Value: serverless-pipeline
 
   ProcessedFilesTable:
     Type: AWS::DynamoDB::Table
