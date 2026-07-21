@@ -25,6 +25,7 @@ Currently implemented: account security setup, S3 ingestion bucket, and an S3-tr
 | IAM Role (lambda-dynamodb-read-role) | Grants query Lambda least-privilege permissions to read from DynamoDB and write logs to CloudWatch |
 | API Gateway (HTTP API) | Exposes a public GET endpoint that queries processed file data |
 | CloudFormation | Defines all project resources as a single Infrastructure-as-Code template; enables one-click deploy and teardown |
+| GitHub Actions | Automates CloudFormation deployment on push to main (CI/CD) |
 
 
 ## Cost Breakdown
@@ -42,6 +43,8 @@ Currently implemented: account security setup, S3 ingestion bucket, and an S3-tr
 | IAM Role (lambda-dynamodb-read-role) | Query Lambda execution permissions | Always free | $0 | No |
 | API Gateway (HTTP API) | Public query endpoint | Yes — **first 12 months only** | $0 now; ~$1/million requests after 12 months | No — but revisit cost assumption after year 1 |
 | CloudFormation | Orchestrates resource creation/deletion | Yes — always free (you pay only for the resources it creates, not the service itself) | $0 | No |
+| GitHub Actions | Runs the deploy workflow | Yes — unlimited free for public repos, 2,000 min/month free for private | $0 at this usage | No — keep permanently |
+| IAM User (github-actions-deployer) | Programmatic-only user for CI/CD deploys | Always free | $0 | No — keep, only while project is active |
 
 **Note:** API Gateway is the only resource in this project not part of AWS's *permanent* always-free tier — flagged here as the one line item to revisit if this project is kept running past its first year.
 
@@ -60,8 +63,11 @@ Detailed write-ups (why each decision was made, what was built, lessons learned)
 
 ## Known Limitations
 - The `/files` API Gateway endpoint is currently open — no authentication or API key required. Anyone with the URL can query it.
+- The GitHub Actions deploy user (`github-actions-deployer`) currently has broad managed policies (Full Access across S3, DynamoDB, Lambda, API Gateway, IAM) rather than resource-scoped custom policies — a deliberate simplification, same pattern as earlier milestones.
+
 
 ## Future Improvements
 - Add an API Gateway authorizer (API Key or Lambda authorizer) to restrict access to the query endpoint.
+- Scope `github-actions-deployer`'s permissions down to exact resource ARNs, matching the least-privilege approach already applied to the Lambda execution roles in Milestone 6.
 
 ## Interview Questions & Answers
