@@ -25,7 +25,8 @@ Currently implemented: account security setup, S3 ingestion bucket, and an S3-tr
 | IAM Role (lambda-dynamodb-read-role) | Grants query Lambda least-privilege permissions to read from DynamoDB and write logs to CloudWatch |
 | API Gateway (HTTP API) | Exposes a public GET endpoint that queries processed file data |
 | CloudFormation | Defines all project resources as a single Infrastructure-as-Code template; enables one-click deploy and teardown |
-| GitHub Actions | Automates CloudFormation deployment on push to main (CI/CD) |
+| GitHub Actions | Automates CloudFormation deployment on push to main (CI/CD) |\
+| CloudWatch (Alarms + Dashboard) | Monitors pipeline health — alerts on Lambda errors, visualizes invocation/error/duration metrics |
 
 
 ## Cost Breakdown
@@ -45,6 +46,9 @@ Currently implemented: account security setup, S3 ingestion bucket, and an S3-tr
 | CloudFormation | Orchestrates resource creation/deletion | Yes — always free (you pay only for the resources it creates, not the service itself) | $0 | No |
 | GitHub Actions | Runs the deploy workflow | Yes — unlimited free for public repos, 2,000 min/month free for private | $0 at this usage | No — keep permanently |
 | IAM User (github-actions-deployer) | Programmatic-only user for CI/CD deploys | Always free | $0 | No — keep, only while project is active |
+| CloudWatch Alarm (ingestion errors) | Detects Lambda failures | Yes — within free 10 alarms/month | $0 | No — keep permanently |
+| CloudWatch Dashboard (pipeline-health) | Visual pipeline metrics | Yes — first 3 dashboards free | $0 | No — keep permanently |
+| SNS (pipeline-alerts topic) | Delivers error alarm email | Yes — within free tier | $0 | No | 
 
 **Note:** API Gateway is the only resource in this project not part of AWS's *permanent* always-free tier — flagged here as the one line item to revisit if this project is kept running past its first year.
 
@@ -61,6 +65,7 @@ Detailed write-ups (why each decision was made, what was built, lessons learned)
 - [Milestone 5: API Gateway Query Endpoint](./docs/milestone-5-httpapi-setup.md)
 - [Milestone 6: Infrastructure As code](./docs/milestone-6-infrasturcture-as-code.md)
 - [Milestone 7: CI/CD Pipeline (Github Actions)](./docs/milestone-7-github-actions.md)
+- [Milestone 8: CloudWatch Dashboards + SNS Alerting](./docs/milestone-8-sns-alerting.md)
 
 ## Known Limitations
 - The `/files` API Gateway endpoint is currently open — no authentication or API key required. Anyone with the URL can query it.
@@ -70,5 +75,5 @@ Detailed write-ups (why each decision was made, what was built, lessons learned)
 ## Future Improvements
 - Add an API Gateway authorizer (API Key or Lambda authorizer) to restrict access to the query endpoint.
 - Scope `github-actions-deployer`'s permissions down to exact resource ARNs, matching the least-privilege approach already applied to the Lambda execution roles in Milestone 6.
-
+- Add a CloudWatch alarm on the query Lambda's Errors metric, and a separate alarm on API Gateway's 5xx metric — monitoring at both the Lambda layer and the API layer catches different failure classes (e.g., integration timeouts that wouldn't necessarily show up as a Lambda-level error).
 ## Interview Questions & Answers
