@@ -1,7 +1,7 @@
 # aws-serverless-data-pipeline
 # Serverless Data Ingestion & Query Pipeline
 
-> Status: 🚧 In Progress
+> Status: ✅ Complete
 
 ## Overview
 This project is a serverless data ingestion and query pipeline built on AWS, deployed entirely through Infrastructure as Code with an automated CI/CD pipeline.
@@ -31,34 +31,71 @@ The entire stack is defined as Infrastructure as Code ('infrastructure/template.
 | IAM Role (lambda-dynamodb-read-role) | Grants query Lambda least-privilege permissions to read from DynamoDB and write logs to CloudWatch |
 | API Gateway (HTTP API) | Exposes a public GET endpoint that queries processed file data |
 | CloudFormation | Defines all project resources as a single Infrastructure-as-Code template; enables one-click deploy and teardown |
-| GitHub Actions | Automates CloudFormation deployment on push to main (CI/CD) |\
+| GitHub Actions | Automates CloudFormation deployment on push to main (CI/CD) |
 | CloudWatch (Alarms + Dashboard) | Monitors pipeline health — alerts on Lambda errors, visualizes invocation/error/duration metrics |
 
 
 ## Cost Breakdown
-| Service | Purpose | Free Tier Eligible? | Possible Cost | Delete After Project? |
-|---|---|---|---|---|
-| IAM User/Group | Non-root access | Yes — always free | $0 | No — keep permanently |
-| CloudWatch Alarm | Billing tripwire | Yes — first 10 alarms free | $0 at this usage | No — keep permanently |
-| SNS Topic | Email delivery | Yes — 1,000 emails/month free | $0 at this scale | No — keep permanently |
-| S3 Bucket (kashvi-pipeline-raw-data) | Raw data ingestion | Yes (free tier) | Near-zero | No |
-| IAM Role (lambda-s3-read-role) | Lambda execution permissions | Always free | $0 | No |
-| Lambda (process-incoming-data) | Processes file son S3 upload | Yes - 1M requests + 400,000 GB-seconds/month, permanently | Effectively $0 at test scale | No - keep permanently |
-| S3 Event Notification | Triggers lambda on upload | Free(bucket config, not a billed resource) | $0 | No |
-| DynammoDB Table (ProcessedFilesMetadata) | Stores processed file metadata | Yes - 25GB storage + 25 write/read capacity units always free(this is part of AWS's always-free tier, not just first 12 months); on-demand mode also has its own always-free monthly request allowance | Effectively $0 at test scale | A handful of test writes/reads | No - keep permanently |
-| Lambda (query-processed-files) | Reads DynamoDB, returns JSON via API | Yes — always-free tier | Effectively $0 at test scale | No — keep permanently |
-| IAM Role (lambda-dynamodb-read-role) | Query Lambda execution permissions | Always free | $0 | No |
-| API Gateway (HTTP API) | Public query endpoint | Yes — **first 12 months only** | $0 now; ~$1/million requests after 12 months | No — but revisit cost assumption after year 1 |
-| CloudFormation | Orchestrates resource creation/deletion | Yes — always free (you pay only for the resources it creates, not the service itself) | $0 | No |
-| GitHub Actions | Runs the deploy workflow | Yes — unlimited free for public repos, 2,000 min/month free for private | $0 at this usage | No — keep permanently |
-| IAM User (github-actions-deployer) | Programmatic-only user for CI/CD deploys | Always free | $0 | No — keep, only while project is active |
-| CloudWatch Alarm (ingestion errors) | Detects Lambda failures | Yes — within free 10 alarms/month | $0 | No — keep permanently |
-| CloudWatch Dashboard (pipeline-health) | Visual pipeline metrics | Yes — first 3 dashboards free | $0 | No — keep permanently |
-| SNS (pipeline-alerts topic) | Delivers error alarm email | Yes — within free tier | $0 | No | 
+Every resource in this project stays within AWS's free tier. Full per-resource breakdown → [`docs/cost-breakdown.md`](./docs/cost-breakdown.md)
 
-**Note:** API Gateway is the only resource in this project not part of AWS's *permanent* always-free tier — flagged here as the one line item to revisit if this project is kept running past its first year.
+| Category | Services | Monthly Cost |
+|---|---|---|
+| Account safety | IAM, CloudWatch billing alarm, SNS | $0 |
+| Ingestion | S3, IAM role, Lambda, S3 event notification | $0 |
+| Storage & query | DynamoDB, Lambda, API Gateway | $0 now; API Gateway becomes billable after 12 months |
+| IaC & CI/CD | CloudFormation, GitHub Actions, IAM deploy user | $0 |
+| Monitoring | CloudWatch alarms/dashboard, SNS | $0 |
 
 ## Setup / Deployment Guide
+
+### Prerequisites
+- An AWS account
+- AWS CLI installed and configured (`aws configure`) with credentials for an IAM user with sufficient permissions to create S3, DynamoDB, Lambda, IAM, and API Gateway resources
+- Git installed
+
+### Option A: Manual deploy via AWS CLI
+1. Clone this repository:
+```bash
+git clone https://github.com/Kashvi09/aws-serverless-data-pipeline.git
+cd aws-serverless-data-pipeline
+```
+
+2. Deploy the CloudFormation stack:
+
+```bash
+aws cloudformation deploy \
+  --template-file infrastructure/template.yaml \
+  --stack-name serverless-pipeline-stack \
+  --capabilities CAPABILITY_NAMED_IAM
+```
+
+3. Once complete, retrieve the API endpoint:
+
+```bash
+aws cloudformation describe-stacks \
+  --stack-name serverless-pipeline-stack \
+  --query "Stacks[0].Outputs[0].OutputValue" \
+  --output text
+```
+
+### Option B: Automated deploy via CI/CD (GitHub Actions)
+1. Fork or clone this repository.
+2. Create an IAM user in your own AWS account with programmatic access and permissions covering CloudFormation, S3, DynamoDB, Lambda, IAM, and API Gateway.
+3. In your forked repo, go to **Settings → Secrets and variables → Actions**, and add:
+   - `AWS_ACCESS_KEY_ID`
+   - `AWS_SECRET_ACCESS_KEY`
+4. Push any change to `infrastructure/template.yaml` on the `main` branch — this automatically triggers `.github/workflows/deploy.yml`, which deploys the stack to your AWS account.
+
+### Testing the pipeline
+1. Upload a test file to the S3 bucket created by the stack.
+2. Check the DynamoDB table (`ProcessedFilesMetadata`) — a new item should appear with the file's key.
+3. Call the API endpoint (from the CloudFormation Outputs) at the `/files` route to confirm it returns the stored records as JSON.
+
+### Cleanup / Cost avoidance
+To tear down every resource this project creates in one step:
+aws cloudformation delete-stack --stack-name serverless-pipeline-stack
+
+Note: the S3 bucket must be empty before deletion succeeds — empty it manually first if it contains test files.
 
 ## Milestone Log
 
