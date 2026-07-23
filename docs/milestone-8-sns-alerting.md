@@ -11,3 +11,9 @@
 - Lambda automatically emits metrics like Invocations, Errors, and Duration for every function without any code needed — structured numeric metrics AWS tracks natively, distinct from the print() log lines written manually back in Milestone 3.
 - A dashboard alone doesn't notify anyone — it's a passive visual summary, only useful if someone actively looks at it. An alarm is the active counterpart, pushing a notification the moment a threshold is crossed.
 - Deliberately breaking the function to test the alarm was worth doing — an alarm that's never actually fired is unverified; seeing it correctly transition to ALARM state on a real, intentional failure is the only real proof the whole notification chain works.
+
+**Screenshots**
+![CloudWatch Intentional Lambda Error](../screenshots/milestone-8/cloudwatch-intentional-lambda-error.png)
+![CloudWatch Alarm Triggered](../screenshots/milestone-8/cloudwatch-alarm-triggered.png)
+![SNS Email Alert](../screenshots/milestone-8/sns-email-alert.png)
+![CloudWatch Alarm Recovered](../screenshots/milestone-8/cloudwatch-alarm-recovered.png)

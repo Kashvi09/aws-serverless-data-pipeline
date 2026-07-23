@@ -11,3 +11,7 @@
 - scan() reads every item in the table, which is fine at this project's small scale, but doesn't scale well — it reads (and is billed for) the entire table regardless of how much data you actually need. query() instead retrieves only items matching a specific key, and is the production-appropriate choice as a table grows.
 - API Gateway's free tier is only free for the first 12 months (unlike Lambda and DynamoDB, which are always-free) — this matters for realistically planning what this architecture would cost if kept running long-term past the first year.
 - Securing this endpoint isn't an MFA problem — MFA protects human console logins, but this is a public URL with no login step at all. The correct tool is an API Gateway authorizer (e.g., API Keys, or a custom Lambda authorizer), which checks whether a request should be allowed through before Lambda ever runs. Currently left open for simplicity; noted as a Future Improvement.
+
+**Screenshots**
+![API Gateway Route Config](../screenshots/milestone-5/api-gateway-route-config.png)
+![API Response JSON](../screenshots/milestone-5/api-response-json.png)

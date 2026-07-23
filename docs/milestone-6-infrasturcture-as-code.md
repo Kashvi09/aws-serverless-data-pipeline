@@ -12,3 +12,10 @@
 - CloudFormation deletes resources in reverse dependency order, not simply the reverse of how they're written in the template — a resource can only be deleted once everything depending on it is already gone (e.g., IAM roles are deleted last, since Lambda functions reference them).
 - A non-empty S3 bucket will cause stack deletion to fail (`DELETE_FAILED`) — CloudFormation won't force-delete a bucket with objects still in it, same restriction as the console.
 - Hand-writing scoped ARNs works at this project's small scale, but doesn't scale to real-world projects with dozens of resources. Tools like AWS IAM Access Analyzer (generates least-privilege policies from actual CloudTrail usage) and AWS CDK (higher-level IaC with built-in scoped-permission helpers like `grantReadData()`) exist specifically to solve this at scale.
+
+**Screenshots**
+![CloudFormation Stack Outputs](../screenshots/milestone-6/cloudformation-stack-outputs.png)
+![CloudFormation Stack Resources(1)](../screenshots/milestone-6/cloudformation-stack-resources(1).png)
+![CloudFormation Stack Resources(2)](../screenshots/milestone-6/cloudformation-stack-resources(2).png)
+![SIAC API Response JSON](../screenshots/milestone-6/iac-api-response-json.png)
+![IAC DynamoDB Upload Result](../screenshots/milestone-6/iac-dynamodb-upload-result.png)

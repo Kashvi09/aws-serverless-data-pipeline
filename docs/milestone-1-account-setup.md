@@ -9,3 +9,6 @@
 **Lessons Learned**
 - AWS billing metrics only exist in the us-east-1 region, regardless of which region your actual resources live in.
 - Root account should never be used for daily work — enabling MFA on root and then creating a separate least-privilege IAM user is the standard first step on any new AWS account.
+
+**Screenshots**
+![Cloudwatch billing alarm](../screenshots/milestone-1/Cloudwatch%20billing%20alarm.png)

@@ -10,3 +10,7 @@
 - On-demand capacity charges only for actual reads/writes performed, with no pre-provisioned throughput to pay for — and like Lambda, DynamoDB's free tier is part of AWS's permanent always-free tier, not just the first 12 months. This makes it a strong fit for a low-traffic personal project.
 - DynamoDB's lack of a fixed schema means different items in the same table could technically have different attributes — this flexibility is a tradeoff, not a limitation: useful when relationships between records don't matter, but the wrong choice if the project needed relational queries (joins, multi-table transactions).
 - Reusing the S3 object key as the DynamoDB partition key worked because S3 already guarantees uniqueness within a bucket — avoided generating a separate ID for something that already had one.
+
+**Screenshots**
+![DynamoDB Items](../screenshots/milestone-4/dynamodb-items.png)
+![SNS Subscription](../screenshots/milestone-4/SNS%20Subscription.png)

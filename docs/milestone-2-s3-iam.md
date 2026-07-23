@@ -8,3 +8,7 @@
 **Lessons Learned**
 - True least privilege has two dimensions: which actions are allowed, and which resources they apply to. AmazonS3ReadOnlyAccess only restricts the actions (read-only) — it doesn't restrict which bucket, so this role can technically read from any S3 bucket in the account, not just this one. This will be fixed with a custom scoped policy when we rewrite the project as CloudFormation.
 - IAM roles grant permissions but don't trigger anything on their own — that's a separate mechanism (S3 Event Notifications, set up in the next milestone). It's easy to conflate "who's allowed to act" with "what causes the action to happen," but they're distinct pieces of the architecture.
+
+**Screenshots**
+![Lambda Role Policies](../screenshots/milestone-2/lambda-role-policies.png)
+![S3 Public Access Blocked](../screenshots/milestone-2/s3-public-access-blocked.png)

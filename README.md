@@ -4,13 +4,19 @@
 > Status: 🚧 In Progress
 
 ## Overview
-This project is a serverless data ingestion and query pipeline built on AWS, designed to accept raw data uploads, process them automatically, and make the processed results queryable through an API — without any servers running continuously. 
+This project is a serverless data ingestion and query pipeline built on AWS, deployed entirely through Infrastructure as Code with an automated CI/CD pipeline.
 
-The pipeline follows an event-driven architecture: files uploaded to S3 trigger a Lambda function, which will eventually process and store structured data in DynamoDB, queryable via API Gateway. The project also serves as a hands-on exploration of AWS least-privilege IAM practices, cost-conscious architecture decisions, and Infrastructure as Code (introduced in later milestones).
+Files uploaded to S3 automatically trigger a Lambda function that processes and stores structured metadata in DynamoDB. A second Lambda function, exposed through an API Gateway HTTP endpoint, allows that data to be queried on demand. The entire stack — S3, Lambda, DynamoDB, API Gateway, and all IAM roles — is defined as a single CloudFormation template and deployed automatically via GitHub Actions on every push to `main`. CloudWatch alarms monitor the pipeline for runtime errors, separate from a billing alarm that protects against unexpected cost.
 
-Currently implemented: account security setup, S3 ingestion bucket, and an S3-triggered Lambda function that confirms the event chain end-to-end. Upcoming: DynamoDB storage, API Gateway query endpoint, and a full CloudFormation rewrite.
+Beyond the working pipeline, this project doubles as a hands-on exploration of AWS least-privilege IAM practices, cost-conscious serverless architecture, Infrastructure as Code, and CI/CD — including real permission failures encountered and resolved along the way (documented milestone by milestone in [`/docs`](./docs)).
 
 ## Architecture
+![Pipeline architecture](./diagrams/architecture-diagram.svg)
+
+**Ingestion path:** A file uploaded to S3 triggers the ingestion Lambda, which writes a processed record to DynamoDB.
+**Query path:** A user's request to the API Gateway endpoint invokes the query Lambda, which reads from DynamoDB and returns JSON.
+
+The entire stack is defined as Infrastructure as Code ('infrastructure/template.yaml') and deployed automatically via a GitHub Actions CI/CD pipeline on every push to `main`.
 
 ## AWS Services Used
 | Service | Purpose |
@@ -76,4 +82,8 @@ Detailed write-ups (why each decision was made, what was built, lessons learned)
 - Add an API Gateway authorizer (API Key or Lambda authorizer) to restrict access to the query endpoint.
 - Scope `github-actions-deployer`'s permissions down to exact resource ARNs, matching the least-privilege approach already applied to the Lambda execution roles in Milestone 6.
 - Add a CloudWatch alarm on the query Lambda's Errors metric, and a separate alarm on API Gateway's 5xx metric — monitoring at both the Lambda layer and the API layer catches different failure classes (e.g., integration timeouts that wouldn't necessarily show up as a Lambda-level error).
+
 ## Interview Questions & Answers
+
+## Interview Questions & Answers
+A compiled set of technical Q&A covering IAM, DynamoDB, API Gateway, IaC, and CI/CD decisions made throughout this project → [`docs/interview-questions.md`](./docs/interview-questions.md)

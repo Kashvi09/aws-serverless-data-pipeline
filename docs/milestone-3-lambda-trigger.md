@@ -10,3 +10,8 @@
 - When AWS auto-generates a Lambda execution role through the console, it attaches AWSLambdaBasicExecutionRole by default, which grants permission to write to CloudWatch Logs. Because we manually attached our own role (lambda-s3-read-role, scoped only to S3 read access) instead, logging permission wasn't included — so the function ran and triggered correctly, but silently failed to write any log output.
 - This showed that logging in Lambda isn't automatic — like everything else in AWS IAM, it requires an explicit permission (logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents). Fixed by attaching AWSLambdaBasicExecutionRole to the existing role — no code redeploy needed, since IAM permission changes apply immediately.
 - This also clarified that there are two separate "permission directions" at play: the execution role controls what the Lambda function itself is allowed to do (read S3, write logs), while a separate resource-based policy controls who is allowed to invoke the Lambda function in the first place (in this case, granting S3 that right).
+
+**Screenshots**
+![Lambda CloudWatch Permission Error](../screenshots/milestone-3/lambda-cloudwatch-permission-error.png)
+![Lambda Success Log](../screenshots/milestone-3/lambda-success-log.png)
+![Lambda Trigger](../screenshots/milestone-3/lambda-trigger.png)
