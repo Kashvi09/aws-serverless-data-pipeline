@@ -84,6 +84,4 @@ Detailed write-ups (why each decision was made, what was built, lessons learned)
 - Add a CloudWatch alarm on the query Lambda's Errors metric, and a separate alarm on API Gateway's 5xx metric — monitoring at both the Lambda layer and the API layer catches different failure classes (e.g., integration timeouts that wouldn't necessarily show up as a Lambda-level error).
 
 ## Interview Questions & Answers
-
-## Interview Questions & Answers
 A compiled set of technical Q&A covering IAM, DynamoDB, API Gateway, IaC, and CI/CD decisions made throughout this project → [`docs/interview-questions.md`](./docs/interview-questions.md)
